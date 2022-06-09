@@ -4,11 +4,14 @@ nLinhas = nColunas = 20
 posicoes_horizontais = '    1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16  17  18  19  20'
 posicoes_verticais = (
 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T')
-# navios = [['Porta-Aviao', 4, 3, '🚢'], ['Cruzador', 3, 4, '🛥️'], ['Fragata', 2, 5, '🚤']]
+# navios = [['Porta-Aviao', 4, 3, '🚢'], ['Cruzador', 3, 4, ' 🛥️ '], ['Fragata', 2, 5, '🚤']]
 navios = [['Porta-Aviao', 4, 1, '🚢'], ['Cruzador', 3, 0, '🛥️'], ['Fragata', 2, 0, '🚤']]
 posicoes_atacadas = []
 acertos = 0
-
+pontos = 0
+acerto_porta_aviao = 0
+acerto_cruzador = 0
+acerto_fragata = 0
 
 def gera_tabuleiro():
     tabuleiro = ['🌊'] * nLinhas
@@ -140,6 +143,26 @@ def defesa():
         bota_navio_no_tabuleiro(tabuleiro_defesa, escolha_usuario, escolha_posicao)
         print_tabuleiro(tabuleiro_defesa)
 
+def valida_acerto(elemento):
+    global acerto_porta_aviao
+    global acerto_cruzador
+    global acerto_fragata
+    global pontos
+
+    if elemento == '🚢':
+        acerto_porta_aviao += 1
+        if (acerto_porta_aviao % 4) == 0:
+            pontos += 30
+    elif elemento == '🛥️':
+        acerto_cruzador += 1
+        if (acerto_cruzador % 3) == 0:
+            pontos += 20
+    elif elemento == '🚤':
+        acerto_fragata += 1
+        if (acerto_fragata % 2) == 0:
+            pontos += 10
+
+
 
 while True:
 
@@ -183,6 +206,7 @@ while True:
         if (acertos == 4):
             print_tabuleiro(tabuleiro_ataque)
             print('Voce ganhou !!!!')
+            print('\nPontuação: ', pontos)
             print(f'Voce jogou {len(posicoes_atacadas)} vezes')
             break
 
