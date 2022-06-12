@@ -1,11 +1,11 @@
 import os
 
 nLinhas = nColunas = 20
-posicoes_horizontais = '    1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16  17  18  19  20'
+posicoes_horizontais = '   1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16  17  18  19  20'
 posicoes_verticais = (
 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T')
-# navios = [['Porta-Aviao', 4, 3, '🚢'], ['Cruzador', 3, 4, ' 🛥️ '], ['Fragata', 2, 5, '🚤']]
-navios = [['Porta-Aviao', 4, 1, '🚢'], ['Cruzador', 3, 0, '🛥️'], ['Fragata', 2, 0, '🚤']]
+navios = [['Porta-Aviao', 4, 3, '🚢'], ['Cruzador', 3, 4, '🛥️ '], ['Fragata', 2, 5, '🚤']]
+
 posicoes_atacadas = []
 acertos = 0
 pontos = 0
@@ -73,7 +73,7 @@ def acha_linha(letra):
 
 def valida_posicao(tabuleiro, navio, posicao):
     linha, coluna = posicao
-    if (linha == -1 or coluna > 18 or coluna < 1 or coluna + navios[navio][1] - 1 > 19):
+    if (linha == -1 or coluna > 18 or coluna < 0 or coluna + navios[navio][1] - 1 > 19):
         return False
     for index in range(navios[navio][1]):
         if (tabuleiro[linha][coluna + index] != '🌊'):
@@ -83,7 +83,7 @@ def valida_posicao(tabuleiro, navio, posicao):
 
 def valida_ataque(posicao):
     linha, coluna = posicao
-    if linha == -1 or coluna > 18 or coluna < 1:
+    if linha == -1 or coluna > 19 or coluna < 0:
         return False
     for index in range(len(posicoes_atacadas)):
         if posicoes_atacadas[index][0] == linha and posicoes_atacadas[index][1] == coluna:
@@ -98,11 +98,32 @@ def bota_navio_no_tabuleiro(tabuleiro, navio, posicao):
     navios[navio][2] -= 1
 
 
+def valida_acerto(elemento):
+    global acerto_porta_aviao
+    global acerto_cruzador
+    global acerto_fragata
+    global pontos
+
+    if elemento == '🚢':
+        acerto_porta_aviao += 1
+        if (acerto_porta_aviao % 4) == 0:
+            pontos += 30
+    elif elemento == '🛥️':
+        acerto_cruzador += 1
+        if (acerto_cruzador % 3) == 0:
+            pontos += 20
+    elif elemento == '🚤':
+        acerto_fragata += 1
+        if (acerto_fragata % 2) == 0:
+            pontos += 10
+
+
 def ataca_posicao(tabuleiro_ataque, tabuleiro_defesa, posicao):
     linha, coluna = posicao
     global acertos
     if tabuleiro_defesa[linha][coluna] != '🌊':
         tabuleiro_ataque[linha][coluna] = '💥'
+        valida_acerto(tabuleiro_defesa[linha][coluna])
         acertos += 1
     else:
         tabuleiro_ataque[linha][coluna] = '❌'
@@ -143,27 +164,8 @@ def defesa():
         bota_navio_no_tabuleiro(tabuleiro_defesa, escolha_usuario, escolha_posicao)
         print_tabuleiro(tabuleiro_defesa)
 
-def valida_acerto(elemento):
-    global acerto_porta_aviao
-    global acerto_cruzador
-    global acerto_fragata
-    global pontos
 
-    if elemento == '🚢':
-        acerto_porta_aviao += 1
-        if (acerto_porta_aviao % 4) == 0:
-            pontos += 30
-    elif elemento == '🛥️':
-        acerto_cruzador += 1
-        if (acerto_cruzador % 3) == 0:
-            pontos += 20
-    elif elemento == '🚤':
-        acerto_fragata += 1
-        if (acerto_fragata % 2) == 0:
-            pontos += 10
-
-
-
+os.system('cls||clear')
 while True:
 
     tabuleiro_defesa = gera_tabuleiro()
@@ -203,7 +205,7 @@ while True:
 
         ataca_posicao(tabuleiro_ataque, tabuleiro_defesa, escolha_posicao)
 
-        if (acertos == 4):
+        if (acertos == 34):
             print_tabuleiro(tabuleiro_ataque)
             print('Voce ganhou !!!!')
             print('\nPontuação: ', pontos)
